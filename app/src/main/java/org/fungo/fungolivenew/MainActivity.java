@@ -11,6 +11,8 @@ import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.functions.Predicate;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,5 +25,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
     }
 }
