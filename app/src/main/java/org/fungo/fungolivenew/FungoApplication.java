@@ -4,6 +4,9 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
+import org.fungo.common_core.AppCore;
+import org.fungo.common_core.utils.Utils;
+
 /**
  * @author yqy
  * @create 19-7-15
@@ -20,6 +23,12 @@ public class FungoApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        /**
+         * 初始化AppCode
+         */
+        AppCore.init(this, BuildConfig.DEBUG || Utils.getChannel().equals("test"));
+
 
     }
 }

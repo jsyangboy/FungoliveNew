@@ -1,1 +1,1 @@
-include ':app', ':common_core'
+include ':app', ':common_core', ':common_db'
