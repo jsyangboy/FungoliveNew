@@ -38,5 +38,6 @@ dependencies {
      */
     implementation project(path: ':common_core')
     implementation project(path: ':common_db')
+    implementation project(path: ':common_network')
 
 }
