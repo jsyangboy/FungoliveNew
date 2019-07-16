@@ -35,6 +35,11 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     /**
+     * 基类模块
+     */
+    implementation project(path: ':common_core')
+
+    /**
      * retrofit
      */
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
