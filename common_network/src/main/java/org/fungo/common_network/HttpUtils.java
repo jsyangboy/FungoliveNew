@@ -225,7 +225,7 @@ public class HttpUtils {
      * @return
      */
     public NowTvApiService getNowTvApiService() {
-        return getUserApiRetrofit().create(NowTvApiService.class);
+        return getNowTvApiRetrofit().create(NowTvApiService.class);
     }
 
 
@@ -236,7 +236,7 @@ public class HttpUtils {
      * @return
      */
     public AdApiService getAdApiService() {
-        return getUserApiRetrofit().create(AdApiService.class);
+        return getAdApiRetrofit().create(AdApiService.class);
     }
 
 
@@ -247,7 +247,7 @@ public class HttpUtils {
      * @return
      */
     public ActivityApiService getActivityApiService() {
-        return getUserApiRetrofit().create(ActivityApiService.class);
+        return getActivityApiRetrofit().create(ActivityApiService.class);
     }
 
 
