@@ -1,4 +1,4 @@
-package org.fungo.common_network;
+package org.fungo.common_network.api;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
@@ -9,7 +9,7 @@ import retrofit2.http.Path;
  * @create 19-7-16
  * @Describe
  */
-public interface ApiService {
+public interface AdApiService {
     /**
      * 启动界面图片
      */

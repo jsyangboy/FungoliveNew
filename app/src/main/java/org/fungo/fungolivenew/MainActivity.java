@@ -1,28 +1,18 @@
 package org.fungo.fungolivenew;
 
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
-
-import com.alibaba.android.arouter.launcher.ARouter;
-import com.alibaba.fastjson.JSON;
-import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 
 import org.fungo.common_core.utils.Logger;
 import org.fungo.common_db.DbUtils;
-import org.fungo.common_network.ApiService;
+import org.fungo.common_network.api.AdApiService;
 import org.fungo.common_network.HttpUtils;
-import org.fungo.common_network.RxUtils;
-import org.reactivestreams.Subscription;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -47,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getData() {
-        HttpUtils httpUtils = new HttpUtils();
-        ApiService apiService = httpUtils.getApiService("www.baidu.com");
+
+        /*AdApiService apiService = HttpUtils.getInstance().getUserApiService();
         if (apiService != null) {
             Observable<Object> observable = apiService.getWelcomeInfo("tes");
             observable.subscribeOn(Schedulers.io())
@@ -74,6 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
             Logger.e("yqy apiService == null");
-        }
+        }*/
     }
 }

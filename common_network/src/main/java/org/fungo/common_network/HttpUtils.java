@@ -1,16 +1,17 @@
 package org.fungo.common_network;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import org.fungo.common_core.utils.Logger;
+import org.fungo.common_network.api.A8ApiService;
+import org.fungo.common_network.api.ActivityApiService;
+import org.fungo.common_network.api.AdApiService;
+import org.fungo.common_network.api.NowTvApiService;
+import org.fungo.common_network.api.UserApiService;
+import org.fungo.common_network.host.ServiceHostManager;
+import org.fungo.common_network.interceptor.BasicParamsInterceptor;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -21,62 +22,229 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class HttpUtils {
 
-    private static final int MAX_RETRY_COUNT = 3;
+    private static volatile HttpUtils httpUtils;
+    private static final String TAG = "HttpUtils";
 
-    private static final OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .addInterceptor(new Interceptor() {
-                @Override
-                public Response intercept(Chain chain) {
-                    Request request = chain.request();
-
-                    // try the request
-                    Response response = null;
-
-                    int tryCount = 0;
-                    while (tryCount < MAX_RETRY_COUNT) {
-                        try {
-
-                            tryCount++;
-                            // retry the request
-                            response = chain.proceed(request);
-                            if (response.isSuccessful()) {
-                                tryCount = MAX_RETRY_COUNT;
-                            }
-
-                        } catch (NullPointerException e) {
-                            if (tryCount == MAX_RETRY_COUNT) {
-                                throw e;
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    return response;
+    /**
+     * 单利模式
+     *
+     * @return
+     */
+    public static HttpUtils getInstance() {
+        if (httpUtils != null) {
+            synchronized (HttpUtils.class) {
+                if (httpUtils == null) {
+                    httpUtils = new HttpUtils();
                 }
-            })
-            .build();
+            }
+        }
+        return httpUtils;
+    }
 
-    public Retrofit getApiServiceConfig(String url) {
-        try {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(url)
+    private HttpUtils() {
+    }
+
+    private OkHttpClient okHttpClient;
+
+    /**
+     * 获取httpclick
+     *
+     * @return
+     */
+    private OkHttpClient getOkHttpClient() {
+        //定制OkHttp
+        OkHttpClient.Builder httpClientBuilder = new OkHttpClient
+                .Builder();
+        /**
+         * OkHttp进行添加拦截器
+         */
+        httpClientBuilder.addInterceptor(getLoggerInterceptor());
+        httpClientBuilder.addInterceptor(getBasicParamsInterceptor());
+
+        if (okHttpClient == null) {
+            okHttpClient = httpClientBuilder.build();
+        }
+        return okHttpClient;
+    }
+
+    /**
+     * long
+     *
+     * @return
+     */
+    private Interceptor getLoggerInterceptor() {
+        //日志显示级别
+        HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BODY;
+        //新建log拦截器
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+            @Override
+            public void log(String message) {
+                Logger.e(TAG + " message=" + message);
+            }
+        });
+        loggingInterceptor.setLevel(level);
+        return loggingInterceptor;
+    }
+
+    /**
+     * 公共参数
+     *
+     * @return
+     */
+    private Interceptor getBasicParamsInterceptor() {
+        BasicParamsInterceptor basicParamsInterceptor = new BasicParamsInterceptor.Builder()
+                .addHeaderLine("hello:hello")
+                .addQueryParam("deviceId", "12345")
+                .build();
+        return basicParamsInterceptor;
+    }
+
+    /**
+     * user接口
+     *
+     * @return
+     */
+    private static Retrofit UserRetrofit;
+
+    private Retrofit getUserApiRetrofit() {
+        if (UserRetrofit == null) {
+            UserRetrofit = new Retrofit.Builder()
+                    .baseUrl(ServiceHostManager.getInstall().getUser_service() + "/")
                     .addConverterFactory(GsonConverterFactory.create())
-                    .client(client)
+                    .client(getOkHttpClient())//使用自己创建的OkHttp
                     .build();
-
-            return retrofit;
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return null;
+        return UserRetrofit;
     }
 
-    public ApiService getApiService(String url) {
-        Retrofit retrofit = getApiServiceConfig(url);
-        if (retrofit != null) {
-            return retrofit.create(ApiService.class);
+
+    /**
+     * user接口
+     *
+     * @return
+     */
+    private static Retrofit NowTvRetrofit;
+
+    private Retrofit getNowTvApiRetrofit() {
+        if (NowTvRetrofit == null) {
+            NowTvRetrofit = new Retrofit.Builder()
+                    .baseUrl(ServiceHostManager.getInstall().getNowtv_service() + "/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(getOkHttpClient())//使用自己创建的OkHttp
+                    .build();
         }
-        return null;
+        return NowTvRetrofit;
     }
+
+
+    /**
+     * ad接口
+     *
+     * @return
+     */
+    private static Retrofit AdRetrofit;
+
+    private Retrofit getAdApiRetrofit() {
+        if (AdRetrofit == null) {
+            AdRetrofit = new Retrofit.Builder()
+                    .baseUrl(ServiceHostManager.getInstall().getAd_service() + "/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(getOkHttpClient())//使用自己创建的OkHttp
+                    .build();
+        }
+        return AdRetrofit;
+    }
+
+    /**
+     * ad接口
+     *
+     * @return
+     */
+    private static Retrofit ActivityRetrofit;
+
+    private Retrofit getActivityApiRetrofit() {
+        if (ActivityRetrofit == null) {
+            ActivityRetrofit = new Retrofit.Builder()
+                    .baseUrl(ServiceHostManager.getInstall().getActivity_service() + "/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(getOkHttpClient())//使用自己创建的OkHttp
+                    .build();
+        }
+        return ActivityRetrofit;
+    }
+
+    /**
+     * ad接口
+     *
+     * @return
+     */
+    private static Retrofit A8Retrofit;
+
+    private Retrofit getA8ApiRetrofit() {
+        if (A8Retrofit == null) {
+            A8Retrofit = new Retrofit.Builder()
+                    .baseUrl(ServiceHostManager.getInstall().getA8_service() + "/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(getOkHttpClient())//使用自己创建的OkHttp
+                    .build();
+        }
+        return A8Retrofit;
+    }
+
+
+    /**
+     * 获取接口
+     * User接口
+     *
+     * @return
+     */
+
+    public UserApiService getUserApiService() {
+        return getUserApiRetrofit().create(UserApiService.class);
+    }
+
+    /**
+     * 获取接口
+     * nowTv接口
+     *
+     * @return
+     */
+    public NowTvApiService getNowTvApiService() {
+        return getUserApiRetrofit().create(NowTvApiService.class);
+    }
+
+
+    /**
+     * 获取接口
+     * ad接口
+     *
+     * @return
+     */
+    public AdApiService getAdApiService() {
+        return getUserApiRetrofit().create(AdApiService.class);
+    }
+
+
+    /**
+     * 获取接口
+     * activity接口
+     *
+     * @return
+     */
+    public ActivityApiService getActivityApiService() {
+        return getUserApiRetrofit().create(ActivityApiService.class);
+    }
+
+
+    /**
+     * 获取接口
+     * A8接口
+     *
+     * @return
+     */
+    public A8ApiService getA8ApiService() {
+        return getA8ApiRetrofit().create(A8ApiService.class);
+    }
+
+
 }
