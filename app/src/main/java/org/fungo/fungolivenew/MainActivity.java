@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.btn_go)
     public void onViewClicked() {
         try {
-            ARouter.getInstance().build("/feature_player_live/FungoLiveActivity").navigation();
+            ARouter.getInstance().build("/feature_player_live/FungoLivePlayerActivity").navigation();
         } catch (Exception e) {
             e.printStackTrace();
         }

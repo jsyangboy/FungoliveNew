@@ -3,7 +3,13 @@
     package="org.fungo.feature_player_live">
 
     <application>
-        <activity android:name=".FungoLiveActivity"></activity>
+        <activity
+            android:name=".FungoLivePlayerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/FullscreenTheme"
+            android:launchMode="singleTop"
+            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>

@@ -1,3 +1,7 @@
-<resources>
-    <string name="app_name">common_core</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">云图7号马甲</string>
+
+    <string name="title_activity_splash" tools:ignore="ExtraTranslation">SplashActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
