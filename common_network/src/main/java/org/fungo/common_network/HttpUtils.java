@@ -1,6 +1,7 @@
 package org.fungo.common_network;
 
 import org.fungo.common_core.utils.Logger;
+import org.fungo.common_core.utils.Utils;
 import org.fungo.common_network.api.A8ApiService;
 import org.fungo.common_network.api.ActivityApiService;
 import org.fungo.common_network.api.AdApiService;
@@ -86,6 +87,10 @@ public class HttpUtils {
         return loggingInterceptor;
     }
 
+    private String apk_package_name = "test";
+    private String enterPrise = "0";
+    private String appMark = "android";
+
     /**
      * 公共参数
      *
@@ -93,9 +98,19 @@ public class HttpUtils {
      */
     private Interceptor getBasicParamsInterceptor() {
         BasicParamsInterceptor basicParamsInterceptor = new BasicParamsInterceptor.Builder()
-                .addHeaderLine("hello:hello")
-                .addQueryParam("deviceId", "12345")
-                .build();
+                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_VERSION, Utils.getVersionNameTiny())
+                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_PLATFORM, NetWorkConstants.REQ_PARAMS_VALUE_PLATFROM)
+                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_APPX, NetWorkConstants.REQ_PARAMS_VALUE_APPX)
+                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_APPPN, apk_package_name)
+                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_ENTERPRISE, enterPrise)
+                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_CHANNEL, Utils.getChannel())
+                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_MARKET, String.valueOf(Utils.getMarketInfo()))
+                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_OS_VERSION, String.valueOf(Utils.getReleaseVersionNumber()))
+                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_DEVICE_MODEL, String.valueOf(Utils.getDeviceModel()))
+                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_DEVICE_CODE, Utils.getDeviceId())
+                .addQueryParam(NetWorkConstants.REQ_PARAMS_VALUE_UDID, Utils.getDeviceInfoWithoutMD5())
+                .addQueryParam(NetWorkConstants.REQ_PARAMS_VALUE_ANDROID_ID, Utils.getAndroidId())
+                .addQueryParam(NetWorkConstants.REQ_PARAMS_VALUE_SOURCE, appMark).build();
         return basicParamsInterceptor;
     }
 
