@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
+import com.alibaba.android.arouter.launcher.ARouter;
+
 import org.fungo.common_core.AppCore;
 import org.fungo.common_core.utils.Utils;
 
@@ -29,6 +31,12 @@ public class FungoApplication extends MultiDexApplication {
          */
         AppCore.init(this, BuildConfig.DEBUG || Utils.getChannel().equals("test"));
 
+        ARouter.openDebug();
+        ARouter.openLog();
 
+        /**
+         * 主要是查找编译的时候生成的文件，并将文件存的到内存中，生成一个调用的路由表
+         */
+        ARouter.init(this);
     }
 }

@@ -2,25 +2,22 @@ package org.fungo.fungolivenew;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
+import android.widget.Button;
+
+import com.alibaba.android.arouter.launcher.ARouter;
 
 import org.fungo.common_core.utils.Logger;
 import org.fungo.common_db.DbUtils;
-import org.fungo.common_network.api.AdApiService;
-import org.fungo.common_network.HttpUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
 
-    @BindView(R.id.recycleView)
-    RecyclerView recycleView;
+    @BindView(R.id.btn_go)
+    Button btnGo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         DbUtils.getInstance().putString("test", "testetsetestttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt");
 
         getData();
+
+
     }
 
     public void getData() {
@@ -65,5 +64,14 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Logger.e("yqy apiService == null");
         }*/
+    }
+
+    @OnClick(R.id.btn_go)
+    public void onViewClicked() {
+        try {
+            ARouter.getInstance().build("/feature_player_live/FungoLiveActivity").navigation();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

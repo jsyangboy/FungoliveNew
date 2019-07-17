@@ -1,1 +1,1 @@
-include ':app', ':common_core', ':common_db', ':common_network',  ':feature_player'
+include ':app', ':common_core', ':common_db', ':common_network',  ':feature_player', ':feature_player_live'
