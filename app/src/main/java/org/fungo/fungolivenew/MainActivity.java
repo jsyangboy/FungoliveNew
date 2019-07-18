@@ -1,8 +1,11 @@
 package org.fungo.fungolivenew;
 
 import android.Manifest;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -10,6 +13,9 @@ import android.widget.Toast;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import org.fungo.common_core.base.BaseActivity;
+import org.fungo.common_core.rx.RxAsync;
+import org.fungo.common_core.utils.DecodeUtils;
 import org.fungo.common_core.utils.Logger;
 import org.fungo.common_core.utils.Utils;
 import org.fungo.common_db.DbUtils;
@@ -18,6 +24,9 @@ import org.fungo.common_network.NetWorkConstants;
 import org.fungo.common_network.api.NowTvApiService;
 import org.fungo.common_network.bean.EPGItem;
 import org.fungo.common_network.interceptor.BasicParamsInterceptor;
+import org.fungo.common_network.utils.RxUtils;
+import org.fungo.fungolivenew.persenters.MainActivityPresenter;
+import org.reactivestreams.Subscription;
 
 import java.util.List;
 
@@ -25,13 +34,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
 
     @BindView(R.id.btn_go)
@@ -39,11 +50,19 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.btn_get)
     Button btnGet;
 
+    MainActivityPresenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        presenter = ViewModelProviders.of(this).get(MainActivityPresenter.class);
+        /**
+         * 监听生命周期
+         */
+        getLifecycle().addObserver(presenter);
 
         long start = System.currentTimeMillis();
         String value = DbUtils.getInstance().getString("test");
@@ -61,44 +80,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-    }
 
-    public void getData() {
-
-        try {
-            NowTvApiService apiService = HttpUtils.getInstance().getNowTvApiService();
-            if (apiService != null) {
-                Observable<ResponseBody> observable = apiService.getEpgFormIds("50667");
-                //Observable<ResponseBody> observable = apiService.getEpgFormTag("央视");
-                observable.subscribeOn(Schedulers.io())
-                        .unsubscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .retry(3)//请求失败重连次数
-                        .subscribe(new DisposableObserver<ResponseBody>() {
-                            @Override
-                            public void onNext(ResponseBody o) {
-                                Logger.e("yqy onNext");
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Logger.e("yqy onError");
-                            }
-
-                            @Override
-                            public void onComplete() {
-                                Logger.e("yqy onComplete");
-                            }
-                        });
-
-            } else {
-                Logger.e("yqy apiService == null");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
+
 
     @OnClick({R.id.btn_go, R.id.btn_get})
     public void onViewClicked(View view) {
@@ -111,33 +96,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.btn_get:
-                getData();
+                presenter.getData2();
                 break;
         }
     }
 
-    public static void main(String arvs[]) {
-
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("version=" + Utils.getVersionNameTiny()).
-                append("channel=" + Utils.getChannel());
-
-
-
-
-      /*  BasicParamsInterceptor basicParamsInterceptor = new BasicParamsInterceptor.Builder()
-                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_VERSION, Utils.getVersionNameTiny())
-                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_PLATFORM, NetWorkConstants.REQ_PARAMS_VALUE_PLATFROM)
-                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_APPX, NetWorkConstants.REQ_PARAMS_VALUE_APPX)
-                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_APPPN, apk_package_name)
-                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_ENTERPRISE, enterPrise)
-                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_CHANNEL, Utils.getChannel())
-                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_MARKET, String.valueOf(Utils.getMarketInfo()))
-                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_OS_VERSION, String.valueOf(Utils.getReleaseVersionNumber()))
-                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_DEVICE_MODEL, String.valueOf(Utils.getDeviceModel()))
-                .addQueryParam(NetWorkConstants.REQ_PARAMS_KEY_DEVICE_CODE, Utils.getDeviceId())
-                .addQueryParam(NetWorkConstants.REQ_PARAMS_VALUE_UDID, Utils.getDeviceInfoWithoutMD5())
-                .addQueryParam(NetWorkConstants.REQ_PARAMS_VALUE_ANDROID_ID, Utils.getAndroidId())
-                .addQueryParam(NetWorkConstants.REQ_PARAMS_VALUE_SOURCE, appMark).build();*/
-    }
 }

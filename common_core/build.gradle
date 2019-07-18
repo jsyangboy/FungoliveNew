@@ -56,10 +56,18 @@ dependencies {
     api rootProject.ext.dependencies["rxpermissions"]
 
     /**
+     * android lefecycle
+     */
+    api rootProject.ext.dependencies["lifecycle-extensions"]
+    annotationProcessor rootProject.ext.dependencies["lifecycle-compiler"]
+
+    /**
      * 图片处理库
      */
     api rootProject.ext.dependencies["glide"]
     annotationProcessor rootProject.ext.dependencies["glide-compiler"]
+
+
 }
 
 repositories {
