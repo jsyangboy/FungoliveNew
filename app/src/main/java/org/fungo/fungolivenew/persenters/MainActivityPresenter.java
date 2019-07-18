@@ -10,8 +10,13 @@ import org.fungo.common_core.utils.Logger;
 import org.fungo.common_network.HttpUtils;
 import org.fungo.common_network.utils.RxUtils;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
 /**
@@ -29,6 +34,7 @@ public class MainActivityPresenter extends BasePresenter {
     public void getData2() {
         Disposable disposable = HttpUtils.getInstance().getNowTvApiService()
                 .getEpgFormTag("央视")
+                .subscribeOn(Schedulers.io())
                 .compose(RxUtils.<ResponseBody>io_main())
                 .doOnNext(new Consumer<ResponseBody>() {
                     @Override

@@ -37,7 +37,7 @@ dependencies {
     /**
      * 基类模块
      */
-    implementation project(path: ':common_core')
+    api project(path: ':common_core')
 
     /**
      * retrofit
