@@ -2,7 +2,7 @@ package org.fungo.feature_player_live;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.FrameLayout;
+import android.view.WindowManager;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 
@@ -22,6 +22,17 @@ public class FungoLivePlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /**
+         * 隐藏标题栏
+         */
+        getSupportActionBar().hide();
+
+        /**
+         * 隐藏状态栏
+         */
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_fungo_live);
 
         Bundle bundle = getIntent().getBundleExtra("");
