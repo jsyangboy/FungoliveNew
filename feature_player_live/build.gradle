@@ -17,6 +17,7 @@ android {
         }
 
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -24,6 +25,10 @@ android {
         }
     }
 
+    /**
+     * 规定该模块的资源的命令规则
+     */
+    resourcePrefix 'live_player_'
 }
 
 dependencies {

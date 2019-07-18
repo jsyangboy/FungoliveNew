@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/live_player_bg_top"
+        android:gravity="top">
+
+
+        <ImageButton
+            android:id="@+id/btn_exit"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/live_player_player_exit_button_normal" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/btn_exit"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="22dp"
+                android:text="CCTV5+ 中超比赛精华"
+                android:textColor="#ffffffff"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tv_sub_title"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="来源网页：http://app.tv.com/video....html#ewj"
+                android:textColor="#99ffffff"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+
+        <ImageButton
+            android:id="@+id/btn_share"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/live_player_icon_fullscreen_share" />
+    </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/btn_lock"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center|left"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/live_player_icon_fullscreen_unlock" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/live_player_bg_bottom">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btn_pase"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_centerVertical="true"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/live_player_icon_fullscreen_pause" />
+
+            <ImageButton
+                android:id="@+id/btn_last"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_centerVertical="true"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="16dp"
+                android:layout_toRightOf="@id/btn_pase"
+                android:background="@drawable/live_player_icon_fullscreen_last" />
+
+            <ImageButton
+                android:id="@+id/btn_next"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_centerVertical="true"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="16dp"
+                android:layout_toRightOf="@id/btn_last"
+                android:background="@drawable/live_player_icon_fullscreen_next" />
+
+            <TextView
+                android:id="@+id/tv_change_channel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="30dp"
+                android:text="换台"
+                android:textColor="#ffffffff"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tv_change_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="30dp"
+                android:layout_toLeftOf="@+id/tv_change_channel"
+                android:text="线路"
+                android:textColor="#ffffffff"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tv_change_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="30dp"
+                android:layout_toLeftOf="@+id/tv_change_line"
+                android:text="回看"
+                android:textColor="#ffffffff"
+                android:textSize="15sp" />
+
+
+        </RelativeLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycleView"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="bottom" />
+    </FrameLayout>
+</FrameLayout>

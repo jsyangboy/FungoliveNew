@@ -2,27 +2,61 @@ package org.fungo.feature_player_live;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
+import org.fungo.common_core.utils.Logger;
+import org.fungo.common_core.utils.WeakHandler;
 import org.fungo.feature_player_live.persenter.IjkLivePlayerPresenter;
+import org.fungo.feature_player_live.ui.BasePlayerContent;
+import org.fungo.feature_player_live.ui.LivePlayerControl_Main;
 
 
 /**
  *
  */
-public class IjkLivePlayerFragment extends Fragment {
+public class IjkLivePlayerFragment extends Fragment implements WeakHandler.IHandler {
 
 
-    IjkLivePlayerPresenter ijkLivePlayerPresenter;
+    private IjkLivePlayerPresenter ijkLivePlayerPresenter;
+    private FrameLayout layout_video, layout_content;
+
+    /**
+     * 播放器主要的控制页面
+     */
+    private LivePlayerControl_Main livePlayerControl_main;
+
+    /**
+     * 定时检查是否正常播放,如果不正常,要自动切换下一条线路
+     */
+    private WeakHandler weakHandler_time = new WeakHandler(new WeakHandler.IHandler() {
+        @Override
+        public void handleMsg(Message msg) {
+
+        }
+    });
+
+    /**
+     * 各种各样的界面交互
+     */
+    private WeakHandler weakHandler_work = new WeakHandler(this);
+
+    /**
+     * 改变view的命令
+     */
+    private static final int Msg_Change_View = 0;
+    private static final int Msg_ = 1;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_ijk_live, container, false);
+        View view = inflater.inflate(R.layout.live_player_fragment_ijk_live, container, false);
 
 
         /**
@@ -34,8 +68,35 @@ public class IjkLivePlayerFragment extends Fragment {
          */
         getLifecycle().addObserver(ijkLivePlayerPresenter);
 
+        /**
+         * 初始化view
+         */
+        initView(view);
 
         return view;
+    }
+
+    private void initView(View view) {
+        layout_video = view.findViewById(R.id.layout_video);
+        layout_content = view.findViewById(R.id.layout_content);
+
+        /**
+         * 显示主页
+         */
+        switchContetView(BasePlayerContent.View_Type_Main);
+    }
+
+    /**
+     * 获取播放主页
+     *
+     * @return
+     */
+    private View getPlayerControlMainView() {
+        if (livePlayerControl_main == null) {
+            livePlayerControl_main = new LivePlayerControl_Main();
+            livePlayerControl_main.init(getActivity());
+        }
+        return livePlayerControl_main.getView();
     }
 
 
@@ -44,6 +105,59 @@ public class IjkLivePlayerFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    @Override
+    public void handleMsg(Message msg) {
+        final int type = msg.what;
+        switch (type) {
+            case Msg_Change_View:
+                try {
+                    final View view = (View) msg.getData().get("view");
+                    //changeContentView(view);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+    }
+
+
+    private void switchContetView(int viewType) {
+        switch (viewType) {
+            case BasePlayerContent.View_Type_Main:
+                FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+
+                changeContentView(getPlayerControlMainView(), layoutParams);
+                break;
+        }
+    }
+
+
+    /**
+     * 切换view
+     *
+     * @param view
+     */
+    private void changeContentView(View view, FrameLayout.LayoutParams layoutParams) {
+        try {
+            if (view == null) {
+                Logger.e("yqy changeContentView view is null");
+                return;
+            }
+            if (layout_content != null) {
+                final int count = layout_content.getChildCount();
+                if (count != 0) {
+                    layout_content.removeAllViews();
+                }
+                if (layoutParams != null) {
+                    layout_content.addView(view, layoutParams);
+                } else {
+                    layout_content.addView(view);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void onDestroyView() {

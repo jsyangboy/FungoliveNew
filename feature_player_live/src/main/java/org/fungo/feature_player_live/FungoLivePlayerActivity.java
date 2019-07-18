@@ -33,7 +33,7 @@ public class FungoLivePlayerActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_fungo_live);
+        setContentView(R.layout.live_player_activity_fungo_live);
 
         Bundle bundle = getIntent().getBundleExtra("");
         createIjkLivePlayer(playerBundleData);

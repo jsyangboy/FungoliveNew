@@ -46,6 +46,11 @@ dependencies {
     api rootProject.ext.dependencies["fastjson"]
 
     /**
+     * 万能适配器
+     */
+    api rootProject.ext.dependencies["rvadapter"]
+
+    /**
      * rxandroid
      */
     api rootProject.ext.dependencies["rxjava2"]
