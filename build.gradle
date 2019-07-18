@@ -18,7 +18,7 @@ allprojects {
     repositories {
         google()
         jcenter()
-
+        maven { url 'https://jitpack.io' }
         maven {
             name 'google'
             url 'https://maven.aliyun.com/repository/google'

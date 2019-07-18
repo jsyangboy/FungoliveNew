@@ -51,6 +51,11 @@ dependencies {
     api rootProject.ext.dependencies["rxjava2"]
 
     /**
+     * 权限模块
+     */
+    api rootProject.ext.dependencies["rxpermissions"]
+
+    /**
      * 图片处理库
      */
     api rootProject.ext.dependencies["glide"]
@@ -59,6 +64,7 @@ dependencies {
 
 repositories {
     jcenter()
+
 
     maven {
         name 'google'

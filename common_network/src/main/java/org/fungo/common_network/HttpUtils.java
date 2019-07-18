@@ -14,6 +14,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -32,7 +33,7 @@ public class HttpUtils {
      * @return
      */
     public static HttpUtils getInstance() {
-        if (httpUtils != null) {
+        if (httpUtils == null) {
             synchronized (HttpUtils.class) {
                 if (httpUtils == null) {
                     httpUtils = new HttpUtils();
@@ -53,16 +54,15 @@ public class HttpUtils {
      * @return
      */
     private OkHttpClient getOkHttpClient() {
-        //定制OkHttp
-        OkHttpClient.Builder httpClientBuilder = new OkHttpClient
-                .Builder();
-        /**
-         * OkHttp进行添加拦截器
-         */
-        httpClientBuilder.addInterceptor(getLoggerInterceptor());
-        httpClientBuilder.addInterceptor(getBasicParamsInterceptor());
-
         if (okHttpClient == null) {
+            //定制OkHttp
+            OkHttpClient.Builder httpClientBuilder = new OkHttpClient
+                    .Builder();
+            /**
+             * OkHttp进行添加拦截器
+             */
+            httpClientBuilder.addInterceptor(getLoggerInterceptor());
+            httpClientBuilder.addInterceptor(getBasicParamsInterceptor());
             okHttpClient = httpClientBuilder.build();
         }
         return okHttpClient;
@@ -75,7 +75,7 @@ public class HttpUtils {
      */
     private Interceptor getLoggerInterceptor() {
         //日志显示级别
-        HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BODY;
+        HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BASIC;
         //新建log拦截器
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
@@ -145,6 +145,7 @@ public class HttpUtils {
             NowTvRetrofit = new Retrofit.Builder()
                     .baseUrl(ServiceHostManager.getInstall().getNowtv_service() + "/")
                     .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .client(getOkHttpClient())//使用自己创建的OkHttp
                     .build();
         }
@@ -181,7 +182,7 @@ public class HttpUtils {
         if (ActivityRetrofit == null) {
             ActivityRetrofit = new Retrofit.Builder()
                     .baseUrl(ServiceHostManager.getInstall().getActivity_service() + "/")
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())//json转换成JavaBean
                     .client(getOkHttpClient())//使用自己创建的OkHttp
                     .build();
         }
