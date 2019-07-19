@@ -46,7 +46,7 @@ dependencies {
     implementation rootProject.ext.dependencies["arouter"]
     annotationProcessor rootProject.ext.dependencies["arouter-compiler"]
 
-    implementation project(path: ':feature_player')
+    implementation project(path: ':common_player')
     implementation project(path: ':common_network')
 
 }
