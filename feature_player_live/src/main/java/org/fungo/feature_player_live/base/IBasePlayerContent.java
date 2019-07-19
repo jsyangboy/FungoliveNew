@@ -1,4 +1,4 @@
-package org.fungo.feature_player_live.ui;
+package org.fungo.feature_player_live.base;
 
 import android.content.Context;
 import android.view.View;

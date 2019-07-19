@@ -1,5 +1,6 @@
 package org.fungo.feature_player_live;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.os.Message;
@@ -12,9 +13,12 @@ import android.widget.FrameLayout;
 
 import org.fungo.common_core.utils.Logger;
 import org.fungo.common_core.utils.WeakHandler;
+import org.fungo.feature_player_live.bean.EPGItem;
 import org.fungo.feature_player_live.persenter.IjkLivePlayerPresenter;
-import org.fungo.feature_player_live.ui.BasePlayerContent;
+import org.fungo.feature_player_live.base.BasePlayerContent;
 import org.fungo.feature_player_live.ui.LivePlayerControl_Main;
+
+import java.util.List;
 
 
 /**
@@ -69,11 +73,36 @@ public class IjkLivePlayerFragment extends Fragment implements WeakHandler.IHand
         getLifecycle().addObserver(ijkLivePlayerPresenter);
 
         /**
+         * 监听回调
+         */
+        addObserver();
+        /**
          * 初始化view
          */
         initView(view);
 
+        getData();
         return view;
+    }
+
+    /**
+     * 获取数据
+     */
+    private void getData() {
+        ijkLivePlayerPresenter.getEpgData();
+    }
+
+    /**
+     * 监听回调
+     */
+    private void addObserver() {
+        ijkLivePlayerPresenter.getMutableLiveData_egps().observe(this, new Observer<List<EPGItem>>() {
+            @Override
+            public void onChanged(@Nullable List<EPGItem> epgItems) {
+                getPlayerControlMainView().addData(epgItems);
+            }
+        });
+
     }
 
     private void initView(View view) {
@@ -91,12 +120,12 @@ public class IjkLivePlayerFragment extends Fragment implements WeakHandler.IHand
      *
      * @return
      */
-    private View getPlayerControlMainView() {
+    private LivePlayerControl_Main getPlayerControlMainView() {
         if (livePlayerControl_main == null) {
             livePlayerControl_main = new LivePlayerControl_Main();
             livePlayerControl_main.init(getActivity());
         }
-        return livePlayerControl_main.getView();
+        return livePlayerControl_main;
     }
 
 
@@ -124,9 +153,7 @@ public class IjkLivePlayerFragment extends Fragment implements WeakHandler.IHand
     private void switchContetView(int viewType) {
         switch (viewType) {
             case BasePlayerContent.View_Type_Main:
-                FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-
-                changeContentView(getPlayerControlMainView(), layoutParams);
+                changeContentView(getPlayerControlMainView().getView(), null);
                 break;
         }
     }
