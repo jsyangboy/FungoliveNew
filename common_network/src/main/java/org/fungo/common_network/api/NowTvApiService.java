@@ -26,4 +26,14 @@ public interface NowTvApiService {
      */
     @GET("epg_tvnow_android_with_tag.php?")
     Observable<ResponseBody> getEpgFormTag(@Query("tag") String tag);
+
+    /**
+     * 根据tvId来获取真正的播放地址信息
+     *
+     * @param tvid
+     * @return
+     */
+    @GET("source_android_with_label.php?")
+    Observable<ResponseBody> getEpgSourceFormId(@Query("tvid") String tvid);
+
 }

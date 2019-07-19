@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 
 import org.fungo.common_core.AppCore;
+import org.fungo.common_core.base.OnItemClickListener;
 import org.fungo.common_core.base.RecycleViewSpaceItemDecoration;
 import org.fungo.common_core.utils.DensityUtil;
 import org.fungo.common_core.utils.Logger;
@@ -22,6 +23,7 @@ import org.fungo.feature_player_live.ui.adapter.PlayerBottomDelegate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author yqy
@@ -56,6 +58,8 @@ public class LivePlayerControl_Main extends BasePlayerContent implements View.On
      * 显示的数据
      */
     private List<Object> showData = new ArrayList<>();
+
+    private OnItemClickListener onItemClickListener;
 
     @Override
     public View getView() {
@@ -95,7 +99,26 @@ public class LivePlayerControl_Main extends BasePlayerContent implements View.On
         recycleView.setAdapter(adapter);
         recycleView.addItemDecoration(new RecycleViewSpaceItemDecoration(DensityUtil.dip2px(getContent(), 5), 1));
 
-        adapter.notifyDataSetChanged();
+        if (showData.size() > 0) {
+            adapter.notifyDataSetChanged();
+        }
+
+        /**
+         * 点击事件
+         */
+        adapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClickListener(position, showData.get(position));
+                }
+            }
+
+            @Override
+            public boolean onItemLongClick(View view, RecyclerView.ViewHolder holder, int position) {
+                return false;
+            }
+        });
     }
 
 
@@ -143,6 +166,10 @@ public class LivePlayerControl_Main extends BasePlayerContent implements View.On
         }
     }
 
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
     class RecycleViewSpaceItemDecoration extends RecyclerView.ItemDecoration {
         int mSpace;
         int mColumn = 1;
@@ -156,7 +183,6 @@ public class LivePlayerControl_Main extends BasePlayerContent implements View.On
              */
             outRect.bottom = mSpace * 2;
             outRect.top = mSpace * 2;
-
 
             if (positon % mColumn == mColumn - 1) {//最后列
                 outRect.right = mSpace * 2;

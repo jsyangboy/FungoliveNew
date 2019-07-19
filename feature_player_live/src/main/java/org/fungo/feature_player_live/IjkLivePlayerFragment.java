@@ -11,9 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import org.fungo.common_core.base.OnItemClickListener;
 import org.fungo.common_core.utils.Logger;
 import org.fungo.common_core.utils.WeakHandler;
 import org.fungo.feature_player_live.bean.EPGItem;
+import org.fungo.feature_player_live.bean.SourceItem;
 import org.fungo.feature_player_live.persenter.IjkLivePlayerPresenter;
 import org.fungo.feature_player_live.base.BasePlayerContent;
 import org.fungo.feature_player_live.ui.LivePlayerControl_Main;
@@ -96,12 +98,26 @@ public class IjkLivePlayerFragment extends Fragment implements WeakHandler.IHand
      * 监听回调
      */
     private void addObserver() {
+        /**
+         * 获取epg信息
+         */
         ijkLivePlayerPresenter.getMutableLiveData_egps().observe(this, new Observer<List<EPGItem>>() {
             @Override
             public void onChanged(@Nullable List<EPGItem> epgItems) {
                 getPlayerControlMainView().addData(epgItems);
             }
         });
+
+        /**
+         * 通过单个epg的tvId来获取真正的播放地址
+         */
+        ijkLivePlayerPresenter.getMutableLiveData_egps_source().observe(this, new Observer<SourceItem>() {
+            @Override
+            public void onChanged(@Nullable SourceItem sourceItem) {
+
+            }
+        });
+
 
     }
 
@@ -124,6 +140,35 @@ public class IjkLivePlayerFragment extends Fragment implements WeakHandler.IHand
         if (livePlayerControl_main == null) {
             livePlayerControl_main = new LivePlayerControl_Main();
             livePlayerControl_main.init(getActivity());
+
+            /**
+             * 底部的item选择事件
+             */
+            livePlayerControl_main.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClickListener(int position, Object object) {
+                    if (object != null) {
+                        EPGItem epgItem = null;
+                        try {
+                            epgItem = (EPGItem) object;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        /**
+                         * epg
+                         */
+                        if (epgItem != null) {
+                            Logger.e("yqy tvId=" + epgItem.getTv_id());
+                            ijkLivePlayerPresenter.getEpgSourceById(String.valueOf(epgItem.getTv_id()));
+                        } else {
+
+                        }
+                    }
+                }
+            });
+
+
         }
         return livePlayerControl_main;
     }

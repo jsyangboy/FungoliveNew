@@ -45,7 +45,6 @@ public class PlayerBottomDelegate implements ItemViewDelegate<MultiItemEntity> {
         }
 
         if (epgItem == null) {
-
             return;
         }
 

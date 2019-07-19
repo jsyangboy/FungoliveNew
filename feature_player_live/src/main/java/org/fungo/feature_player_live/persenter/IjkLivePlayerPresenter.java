@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -16,6 +17,7 @@ import org.fungo.common_core.utils.Utils;
 import org.fungo.common_network.HttpUtils;
 import org.fungo.common_network.utils.RxUtils;
 import org.fungo.feature_player_live.bean.EPGItem;
+import org.fungo.feature_player_live.bean.SourceItem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,14 +39,51 @@ import okhttp3.ResponseBody;
 public class IjkLivePlayerPresenter extends BasePresenter {
 
     private final MutableLiveData<List<EPGItem>> mutableLiveData_egps;
+    private final MutableLiveData<SourceItem> mutableLiveData_egps_source;
 
     public IjkLivePlayerPresenter(@NonNull Application application) {
         super(application);
         mutableLiveData_egps = new MutableLiveData<>();
+        mutableLiveData_egps_source = new MutableLiveData<>();
     }
 
     public MutableLiveData<List<EPGItem>> getMutableLiveData_egps() {
         return mutableLiveData_egps;
+    }
+
+    public MutableLiveData<SourceItem> getMutableLiveData_egps_source() {
+        return mutableLiveData_egps_source;
+    }
+
+    /**
+     * 根据tvid来获取真正的播放信息
+     *
+     * @param tvId
+     */
+    public void getEpgSourceById(String tvId) {
+        Disposable disposable = HttpUtils.getInstance().getNowTvApiService()
+                .getEpgSourceFormId(tvId)
+                .subscribeOn(Schedulers.io())
+                .compose(RxUtils.<ResponseBody>io_main())
+                .subscribe(new Consumer<ResponseBody>() {
+                    @Override
+                    public void accept(ResponseBody responseBody) throws Exception {
+                        final String resolveContent = DecodeUtils.resoveEPGBase64String(responseBody.string());
+                        Logger.e("yqy resolveContent = " + resolveContent);
+
+                        try {
+                            SourceItem sourceItem = JSON.parseObject(resolveContent, SourceItem.class);
+                            mutableLiveData_egps_source.setValue(sourceItem);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+        /**
+         * 添加,activity退出来的时候,会自动释放
+         */
+        addDisposable(disposable);
     }
 
     /**
